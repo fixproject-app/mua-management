@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Bridal MUA Manager</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-theme="light">
+
+  <!-- ============================================================= -->
+  <!-- LOGIN -->
+  <!-- ============================================================= -->
+  <div id="section-login" class="app-section">
+    <div class="login-wrap">
+      <div class="login-card">
+        <h1 class="font-display text-center mb-1" style="font-size:26px;">Bridal MUA Manager</h1>
+        <p class="text-secondary text-center mb-4">Masuk untuk mengelola booking &amp; client Anda</p>
+
+        <div id="login-form">
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" id="login-email" class="form-control" placeholder="nama@email.com" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" id="login-password" class="form-control" placeholder="••••••••" />
+          </div>
+          <button class="btn btn-primary w-100 mb-2" onclick="handleLogin()">Masuk</button>
+          <p class="text-center text-secondary" style="font-size:13px;">Belum punya akun?
+            <a href="#" onclick="toggleAuthMode(); return false;" id="toggle-to-signup">Daftar di sini</a>
+          </p>
+        </div>
+
+        <div id="signup-form" class="d-none">
+          <div class="mb-3">
+            <label class="form-label">Nama Lengkap</label>
+            <input type="text" id="signup-nama" class="form-control" placeholder="Nama Anda" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" id="signup-email" class="form-control" placeholder="nama@email.com" />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Password</label>
+            <input type="password" id="signup-password" class="form-control" placeholder="Minimal 6 karakter" />
+          </div>
+          <button class="btn btn-primary w-100 mb-2" onclick="handleSignup()">Daftar</button>
+          <p class="text-center text-secondary" style="font-size:13px;">Sudah punya akun?
+            <a href="#" onclick="toggleAuthMode(); return false;">Masuk di sini</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================= -->
+  <!-- APP SHELL (muncul setelah login) -->
+  <!-- ============================================================= -->
+  <div id="app-shell" class="d-none">
+
+    <!-- Sidebar Desktop/Tablet -->
+    <nav class="sidebar">
+      <div class="brand"><i class="bi bi-flower2"></i> Bridal MUA</div>
+      <div class="nav-link" data-section="dashboard" onclick="navigateTo('dashboard')"><i class="bi bi-grid-1x2"></i> Dashboard</div>
+      <div class="nav-link" data-section="clients" onclick="navigateTo('clients')"><i class="bi bi-people"></i> Client</div>
+      <div class="nav-link" data-section="bookings" onclick="navigateTo('bookings')"><i class="bi bi-calendar-check"></i> Booking</div>
+      <div class="nav-link" data-section="kalender" onclick="navigateTo('kalender')"><i class="bi bi-calendar3"></i> Jadwal / Kalender</div>
+      <div class="nav-section-label">Persiapan</div>
+      <div class="nav-link" data-section="checklist" onclick="navigateTo('checklist')"><i class="bi bi-check2-square"></i> Checklist Hari H</div>
+      <div class="nav-link" data-section="paket" onclick="navigateTo('paket')"><i class="bi bi-box-seam"></i> Master Paket</div>
+      <div class="nav-section-label">Bisnis</div>
+      <div class="nav-link" data-section="keuangan" onclick="navigateTo('keuangan')"><i class="bi bi-cash-coin"></i> Keuangan</div>
+      <div class="nav-link" data-section="galeri" onclick="navigateTo('galeri')"><i class="bi bi-images"></i> Galeri</div>
+      <div class="nav-link" data-section="team" onclick="navigateTo('team')"><i class="bi bi-person-badge"></i> Team MUA</div>
+      <div class="nav-link" data-section="laporan" onclick="navigateTo('laporan')"><i class="bi bi-bar-chart"></i> Laporan</div>
+      <div class="nav-section-label">Lainnya</div>
+      <div class="nav-link" data-section="pengaturan" onclick="navigateTo('pengaturan')"><i class="bi bi-gear"></i> Pengaturan</div>
+      <div class="nav-link" onclick="signOut()"><i class="bi bi-box-arrow-right"></i> Keluar</div>
+    </nav>
+
+    <div class="main-content">
+
+      <!-- ===================== DASHBOARD ===================== -->
+      <section id="section-dashboard" class="app-section d-none">
+        <div class="topbar">
+          <div>
+            <div class="section-title">Dashboard</div>
+            <div class="text-secondary" style="font-size:13px;">Ringkasan bisnis Anda hari ini</div>
+          </div>
+          <div class="topbar-actions">
+            <button class="theme-toggle" onclick="toggleDarkMode()"><i class="bi bi-moon-stars" id="theme-icon"></i></button>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-6 col-md-3">
+            <div class="kpi-card"><div class="kpi-label">Omzet Bulan Ini</div><div class="kpi-value text-tabular" id="kpi-omzet">Rp 0</div></div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="kpi-card"><div class="kpi-label">Booking Aktif</div><div class="kpi-value text-tabular" id="kpi-booking-aktif">0</div></div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="kpi-card"><div class="kpi-label">Piutang / Sisa Bayar</div><div class="kpi-value text-tabular" id="kpi-piutang">Rp 0</div></div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="kpi-card"><div class="kpi-label">Booking Hari Ini</div><div class="kpi-value text-tabular" id="kpi-hari-ini">0</div></div>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-12 col-md-7">
+            <div class="card-mua">
+              <div class="section-title" style="font-size:16px;">Omzet &amp; Booking per Bulan</div>
+              <canvas id="chart-omzet" height="160"></canvas>
+            </div>
+          </div>
+          <div class="col-12 col-md-5">
+            <div class="card-mua h-100">
+              <div class="section-title" style="font-size:16px;"><i class="bi bi-stars" style="color:var(--accent);"></i> Insight</div>
+              <p id="ai-insight" class="text-secondary mb-0" style="font-size:14px;">Memuat insight...</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-mua">
+          <div class="section-title" style="font-size:16px;">Jadwal Terdekat</div>
+          <div id="dashboard-jadwal-list"></div>
+        </div>
+      </section>
+
+      <!-- ===================== CLIENTS ===================== -->
+      <section id="section-clients" class="app-section d-none">
+        <div class="topbar">
+          <div><div class="section-title">Client</div><div class="text-secondary" style="font-size:13px;">Semua calon client &amp; riwayat</div></div>
+          <div class="topbar-actions">
+            <input type="text" id="client-search" class="form-control" placeholder="Cari nama / WA..." style="width:200px;" oninput="renderClientTable()" />
+            <button class="btn btn-primary" onclick="openClientModal()"><i class="bi bi-plus-lg"></i> Client Baru</button>
+          </div>
+        </div>
+        <div class="table-responsive-mua">
+          <table class="table-mua">
+            <thead><tr><th>No. Client</th><th>Nama</th><th>WhatsApp</th><th>Status</th><th>Dibuat</th><th></th></tr></thead>
+            <tbody id="clients-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===================== BOOKINGS ===================== -->
+      <section id="section-bookings" class="app-section d-none">
+        <div class="topbar">
+          <div><div class="section-title">Booking</div><div class="text-secondary" style="font-size:13px;">Seluruh booking acara</div></div>
+          <div class="topbar-actions">
+            <button class="btn btn-primary" onclick="openBookingWizard()"><i class="bi bi-plus-lg"></i> Booking Baru</button>
+          </div>
+        </div>
+        <div class="table-responsive-mua">
+          <table class="table-mua">
+            <thead><tr><th>No. Booking</th><th>Client</th><th>Tanggal</th><th>Paket</th><th>Status</th><th>Pembayaran</th><th></th></tr></thead>
+            <tbody id="bookings-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===================== BOOKING DETAIL (pusat informasi) ===================== -->
+      <section id="section-booking-detail" class="app-section d-none">
+        <div class="topbar">
+          <div>
+            <button class="btn btn-ghost btn-sm mb-1" onclick="navigateTo('bookings')"><i class="bi bi-arrow-left"></i> Kembali</button>
+            <div class="section-title" id="bd-booking-number">BOOK-0000-00000</div>
+          </div>
+          <div class="topbar-actions">
+            <button class="btn btn-vip btn-sm" onclick="sendWhatsApp()"><i class="bi bi-whatsapp"></i> WhatsApp</button>
+            <button class="btn btn-outline-mua btn-sm" onclick="openMapsLocation()"><i class="bi bi-geo-alt"></i> Lokasi</button>
+          </div>
+        </div>
+
+        <ul class="nav nav-pills mb-3 flex-nowrap overflow-auto" id="bd-tabs" style="gap:6px;">
+          <li class="nav-item"><button class="btn btn-sm btn-outline-mua bd-tab active" data-tab="info" onclick="switchBdTab('info')">Info Acara</button></li>
+          <li class="nav-item"><button class="btn btn-sm btn-outline-mua bd-tab" data-tab="dirias" onclick="switchBdTab('dirias')">Yang Dirias</button></li>
+          <li class="nav-item"><button class="btn btn-sm btn-outline-mua bd-tab" data-tab="gaun" onclick="switchBdTab('gaun')">Gaun</button></li>
+          <li class="nav-item"><button class="btn btn-sm btn-outline-mua bd-tab" data-tab="pembayaran" onclick="switchBdTab('pembayaran')">Pembayaran</button></li>
+          <li class="nav-item"><button class="btn btn-sm btn-outline-mua bd-tab" data-tab="checklist" onclick="switchBdTab('checklist')">Checklist</button></li>
+          <li class="nav-item"><button class="btn btn-sm btn-outline-mua bd-tab" data-tab="packing" onclick="switchBdTab('packing')">Packing</button></li>
+          <li class="nav-item"><button class="btn btn-sm btn-outline-mua bd-tab" data-tab="galeri" onclick="switchBdTab('galeri')">Galeri</button></li>
+        </ul>
+
+        <div id="bd-panel-info" class="bd-panel"></div>
+        <div id="bd-panel-dirias" class="bd-panel d-none"></div>
+        <div id="bd-panel-gaun" class="bd-panel d-none"></div>
+        <div id="bd-panel-pembayaran" class="bd-panel d-none"></div>
+        <div id="bd-panel-checklist" class="bd-panel d-none"></div>
+        <div id="bd-panel-packing" class="bd-panel d-none"></div>
+        <div id="bd-panel-galeri" class="bd-panel d-none"></div>
+      </section>
+
+      <!-- ===================== MASTER PAKET ===================== -->
+      <section id="section-paket" class="app-section d-none">
+        <div class="topbar">
+          <div><div class="section-title">Master Paket</div><div class="text-secondary" style="font-size:13px;">Kelola paket &amp; add-on</div></div>
+          <div class="topbar-actions"><button class="btn btn-primary" onclick="openPackageModal()"><i class="bi bi-plus-lg"></i> Paket Baru</button></div>
+        </div>
+        <div class="row g-3" id="paket-grid"></div>
+      </section>
+
+      <!-- ===================== KALENDER ===================== -->
+      <section id="section-kalender" class="app-section d-none">
+        <div class="topbar">
+          <div><div class="section-title">Jadwal / Kalender</div></div>
+          <div class="topbar-actions">
+            <button class="btn btn-ghost btn-sm" onclick="shiftCalendarMonth(-1)"><i class="bi bi-chevron-left"></i></button>
+            <span id="kalender-label" class="fw-semibold"></span>
+            <button class="btn btn-ghost btn-sm" onclick="shiftCalendarMonth(1)"><i class="bi bi-chevron-right"></i></button>
+          </div>
+        </div>
+        <div class="calendar-grid mb-2" style="font-size:11px; font-weight:700; color:var(--text-secondary);">
+          <div>Min</div><div>Sen</div><div>Sel</div><div>Rab</div><div>Kam</div><div>Jum</div><div>Sab</div>
+        </div>
+        <div class="calendar-grid" id="kalender-grid"></div>
+      </section>
+
+      <!-- ===================== CHECKLIST HARI H ===================== -->
+      <section id="section-checklist" class="app-section d-none">
+        <div class="topbar">
+          <div><div class="section-title">Checklist Hari H</div><div class="text-secondary" style="font-size:13px;">Pilih booking untuk melihat checklist</div></div>
+          <div class="topbar-actions">
+            <select class="form-select" id="checklist-booking-select" style="width:240px;" onchange="loadChecklistForBooking(this.value)"></select>
+          </div>
+        </div>
+        <div id="checklist-content"></div>
+      </section>
+
+      <!-- ===================== KEUANGAN ===================== -->
+      <section id="section-keuangan" class="app-section d-none">
+        <div class="topbar">
+          <div><div class="section-title">Keuangan</div><div class="text-secondary" style="font-size:13px;">Pembayaran masuk &amp; pengeluaran</div></div>
+          <div class="topbar-actions"><button class="btn btn-primary" onclick="openExpenseModal()"><i class="bi bi-plus-lg"></i> Catat Pengeluaran</button></div>
+        </div>
+        <div class="row g-3 mb-3">
+          <div class="col-6 col-md-3"><div class="kpi-card"><div class="kpi-label">Total Pemasukan</div><div class="kpi-value text-tabular" id="fin-pemasukan">Rp 0</div></div></div>
+          <div class="col-6 col-md-3"><div class="kpi-card"><div class="kpi-label">Total Pengeluaran</div><div class="kpi-value text-tabular" id="fin-pengeluaran">Rp 0</div></div></div>
+          <div class="col-6 col-md-3"><div class="kpi-card"><div class="kpi-label">Estimasi Profit</div><div class="kpi-value text-tabular" id="fin-profit">Rp 0</div></div></div>
+          <div class="col-6 col-md-3"><div class="kpi-card"><div class="kpi-label">Piutang Berjalan</div><div class="kpi-value text-tabular" id="fin-piutang">Rp 0</div></div></div>
+        </div>
+        <ul class="nav nav-pills mb-3" style="gap:6px;">
+          <li><button class="btn btn-sm btn-outline-mua fin-tab active" data-tab="pemasukan" onclick="switchFinanceTab('pemasukan')">Pemasukan</button></li>
+          <li><button class="btn btn-sm btn-outline-mua fin-tab" data-tab="pengeluaran" onclick="switchFinanceTab('pengeluaran')">Pengeluaran</button></li>
+        </ul>
+        <div id="finance-pemasukan-panel" class="table-responsive-mua">
+          <table class="table-mua"><thead><tr><th>Tanggal</th><th>Booking</th><th>Jenis</th><th>Jumlah</th><th>Metode</th></tr></thead><tbody id="pemasukan-tbody"></tbody></table>
+        </div>
+        <div id="finance-pengeluaran-panel" class="table-responsive-mua d-none">
+          <table class="table-mua"><thead><tr><th>Tanggal</th><th>Kategori</th><th>Nominal</th><th>Keterangan</th></tr></thead><tbody id="pengeluaran-tbody"></tbody></table>
+        </div>
+      </section>
+
+      <!-- ===================== GALERI ===================== -->
+      <section id="section-galeri" class="app-section d-none">
+        <div class="topbar">
+          <div><div class="section-title">Galeri</div><div class="text-secondary" style="font-size:13px;">Foto referensi &amp; hasil semua client</div></div>
+          <div class="topbar-actions"><button class="btn btn-primary" onclick="openGalleryUploadModal()"><i class="bi bi-upload"></i> Upload Foto</button></div>
+        </div>
+        <div class="gallery-grid" id="galeri-global-grid"></div>
+      </section>
+
+      <!-- ===================== TEAM MUA ===================== -->
+      <section id="section-team" class="app-section d-none">
+        <div class="topbar">
+          <div><div class="section-title">Team MUA</div></div>
+          <div class="topbar-actions"><button class="btn btn-primary" onclick="openTeamModal()"><i class="bi bi-plus-lg"></i> Tambah Anggota</button></div>
+        </div>
+        <div class="row g-3" id="team-grid"></div>
+      </section>
+
+      <!-- ===================== LAPORAN ===================== -->
+      <section id="section-laporan" class="app-section d-none">
+        <div class="topbar"><div><div class="section-title">Laporan</div><div class="text-secondary" style="font-size:13px;">Performa bisnis</div></div></div>
+        <div class="card-mua mb-3"><canvas id="chart-laporan-omzet" height="120"></canvas></div>
+        <div class="card-mua"><canvas id="chart-laporan-paket" height="120"></canvas></div>
+      </section>
+
+      <!-- ===================== PENGATURAN ===================== -->
+      <section id="section-pengaturan" class="app-section d-none">
+        <div class="topbar"><div><div class="section-title">Pengaturan</div></div></div>
+        <div class="card-mua mb-3" style="max-width:520px;">
+          <h3 style="font-size:15px;" class="mb-3">Identitas Bisnis</h3>
+          <div class="mb-3"><label class="form-label">Nama Aplikasi</label><input class="form-control" id="cfg-app_name" /></div>
+          <div class="mb-3"><label class="form-label">Nama Bisnis</label><input class="form-control" id="cfg-business_name" /></div>
+          <div class="mb-3"><label class="form-label">No. WhatsApp Bisnis</label><input class="form-control" id="cfg-business_whatsapp" /></div>
+          <div class="mb-3"><label class="form-label">Alamat</label><input class="form-control" id="cfg-business_address" /></div>
+          <button class="btn btn-primary" onclick="saveAppConfig()">Simpan Pengaturan</button>
+        </div>
+        <div class="card-mua" style="max-width:520px;">
+          <h3 style="font-size:15px;" class="mb-3">Template WhatsApp</h3>
+          <div class="mb-3"><label class="form-label">Reminder H-7</label><textarea class="form-control" id="cfg-wa_template_reminder_h7"></textarea></div>
+          <div class="mb-3"><label class="form-label">Reminder H-3</label><textarea class="form-control" id="cfg-wa_template_reminder_h3"></textarea></div>
+          <div class="mb-3"><label class="form-label">Reminder H-1</label><textarea class="form-control" id="cfg-wa_template_reminder_h1"></textarea></div>
+          <div class="mb-3"><label class="form-label">Konfirmasi DP</label><textarea class="form-control" id="cfg-wa_template_konfirmasi_dp"></textarea></div>
+          <button class="btn btn-primary" onclick="saveAppConfig()">Simpan Template</button>
+        </div>
+      </section>
+
+    </div><!-- /.main-content -->
+
+    <!-- Bottom nav (mobile) -->
+    <nav class="bottom-nav">
+      <div class="nav-link" data-section="dashboard" onclick="navigateTo('dashboard')"><i class="bi bi-grid-1x2"></i>Home</div>
+      <div class="nav-link" data-section="clients" onclick="navigateTo('clients')"><i class="bi bi-people"></i>Client</div>
+      <div class="nav-link" data-section="bookings" onclick="navigateTo('bookings')"><i class="bi bi-calendar-check"></i>Booking</div>
+      <div class="nav-link" data-section="kalender" onclick="navigateTo('kalender')"><i class="bi bi-calendar3"></i>Jadwal</div>
+      <div class="nav-link" data-section="keuangan" onclick="navigateTo('keuangan')"><i class="bi bi-cash-coin"></i>Keuangan</div>
+    </nav>
+    <button class="fab-button" onclick="openBookingWizard()"><i class="bi bi-plus-lg"></i></button>
+  </div>
+
+  <!-- ============================================================= -->
+  <!-- MODALS -->
+  <!-- ============================================================= -->
+
+  <!-- Modal: Client -->
+  <div class="modal fade" id="modal-client" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title font-display" id="modal-client-title">Client Baru</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <input type="hidden" id="client-id" />
+        <div class="mb-2"><label class="form-label">Nama Lengkap</label><input class="form-control" id="client-nama_lengkap" /></div>
+        <div class="mb-2"><label class="form-label">Nama Panggilan</label><input class="form-control" id="client-nama_panggilan" /></div>
+        <div class="mb-2"><label class="form-label">No. WhatsApp</label><input class="form-control" id="client-no_whatsapp" placeholder="62812xxxxxxx" /></div>
+        <div class="mb-2"><label class="form-label">Nama Pasangan</label><input class="form-control" id="client-nama_pasangan" /></div>
+        <div class="mb-2"><label class="form-label">Email</label><input class="form-control" id="client-email" /></div>
+        <div class="mb-2"><label class="form-label">Instagram</label><input class="form-control" id="client-instagram" /></div>
+        <div class="mb-2"><label class="form-label">Sumber Info</label>
+          <select class="form-select" id="client-sumber_info"><option>Instagram</option><option>Referral</option><option>Website</option><option>Lainnya</option></select>
+        </div>
+        <div class="mb-2"><label class="form-label">Catatan</label><textarea class="form-control" id="client-catatan"></textarea></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-ghost" data-bs-dismiss="modal">Batal</button><button class="btn btn-primary" onclick="saveClient()">Simpan</button></div>
+    </div></div>
+  </div>
+
+  <!-- Modal: Booking Wizard (5 langkah) -->
+  <div class="modal fade" id="modal-booking-wizard" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title font-display">Booking Baru</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="d-flex justify-content-between mb-3" style="font-size:12px;" id="wizard-steps-indicator"></div>
+        <div id="wizard-step-1" class="wizard-step">
+          <label class="form-label">Pilih Client</label>
+          <select class="form-select mb-2" id="wiz-client-id"></select>
+          <div class="text-center text-secondary my-2">atau</div>
+          <button class="btn btn-outline-mua w-100" onclick="openClientModal(true)"><i class="bi bi-plus-lg"></i> Buat Client Baru</button>
+        </div>
+        <div id="wizard-step-2" class="wizard-step d-none">
+          <label class="form-label">Pilih Paket</label>
+          <select class="form-select mb-2" id="wiz-package-id" onchange="updateWizardHarga()"></select>
+          <label class="form-label">Tanggal Acara</label>
+          <input type="date" class="form-control mb-2" id="wiz-tanggal_acara" />
+          <div class="row g-2">
+            <div class="col-6"><label class="form-label">Jam Mulai</label><input type="time" class="form-control" id="wiz-jam_mulai" /></div>
+            <div class="col-6"><label class="form-label">Jam Selesai</label><input type="time" class="form-control" id="wiz-jam_selesai" /></div>
+          </div>
+        </div>
+        <div id="wizard-step-3" class="wizard-step d-none">
+          <label class="form-label">Lokasi Acara</label>
+          <input class="form-control mb-2" id="wiz-lokasi_nama" placeholder="Nama gedung/lokasi" />
+          <label class="form-label">Link Google Maps</label>
+          <input class="form-control mb-2" id="wiz-lokasi_maps_url" placeholder="https://maps.google.com/..." />
+          <label class="form-label">Team MUA</label>
+          <select class="form-select" id="wiz-team_member_id"></select>
+          <div id="wiz-bentrok-warning" class="chip chip-danger mt-2 d-none"></div>
+        </div>
+        <div id="wizard-step-4" class="wizard-step d-none">
+          <label class="form-label">Harga Paket</label>
+          <input class="form-control mb-2 text-tabular" id="wiz-harga_paket" readonly />
+          <label class="form-label">Catatan</label>
+          <textarea class="form-control" id="wiz-catatan"></textarea>
+        </div>
+        <div id="wizard-step-5" class="wizard-step d-none">
+          <p>Ringkasan booking akan ditampilkan di sini. Klik <strong>Simpan Booking</strong> untuk membuat booking, nomor otomatis, dan checklist Hari H.</p>
+          <div id="wiz-summary" class="card-mua"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="wiz-btn-back" onclick="wizardBack()">Kembali</button>
+        <button class="btn btn-primary" id="wiz-btn-next" onclick="wizardNext()">Lanjut</button>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- Modal: Payment -->
+  <div class="modal fade" id="modal-payment" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title font-display">Catat Pembayaran</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <input type="hidden" id="payment-booking-id" />
+        <div class="mb-2"><label class="form-label">Jenis Pembayaran</label>
+          <select class="form-select" id="payment-jenis"><option value="dp">DP</option><option value="cicilan">Cicilan</option><option value="pelunasan">Pelunasan</option></select>
+        </div>
+        <div class="mb-2"><label class="form-label">Jumlah (Rp)</label><input type="number" class="form-control" id="payment-jumlah" /></div>
+        <div class="mb-2"><label class="form-label">Metode</label>
+          <select class="form-select" id="payment-metode"><option value="transfer">Transfer</option><option value="cash">Cash</option><option value="qris">QRIS</option><option value="lainnya">Lainnya</option></select>
+        </div>
+        <div class="mb-2"><label class="form-label">Bukti Transfer</label><input type="file" class="form-control" id="payment-bukti" accept="image/*" /></div>
+        <div class="mb-2"><label class="form-label">Catatan</label><textarea class="form-control" id="payment-catatan"></textarea></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-ghost" data-bs-dismiss="modal">Batal</button><button class="btn btn-primary" onclick="savePayment()">Simpan Pembayaran</button></div>
+    </div></div>
+  </div>
+
+  <!-- Modal: Preview file (gambar / bukti transfer) -->
+  <div class="modal fade" id="modal-preview" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Pratinjau</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body text-center"><img id="preview-img" src="" style="max-width:100%; border-radius: var(--radius-input);" /></div>
+      <div class="modal-footer"><a id="preview-download" class="btn btn-outline-mua" download target="_self">Download</a><button class="btn btn-ghost" data-bs-dismiss="modal">Tutup</button></div>
+    </div></div>
+  </div>
+
+  <!-- Modal: Generic confirm dialog -->
+  <div class="modal fade" id="modal-confirm" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Konfirmasi</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body" id="confirm-message">Yakin ingin melanjutkan?</div>
+      <div class="modal-footer"><button class="btn btn-ghost" data-bs-dismiss="modal">Batal</button><button class="btn btn-primary" id="confirm-ok-btn">Ya, Lanjutkan</button></div>
+    </div></div>
+  </div>
+
+  <!-- Modal: Paket -->
+  <div class="modal fade" id="modal-paket" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title font-display">Paket</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <input type="hidden" id="paket-id" />
+        <div class="mb-2"><label class="form-label">Nama Paket</label><input class="form-control" id="paket-nama_paket" /></div>
+        <div class="mb-2"><label class="form-label">Harga (Rp)</label><input type="number" class="form-control" id="paket-harga" /></div>
+        <div class="mb-2"><label class="form-label">Durasi (jam)</label><input type="number" class="form-control" id="paket-durasi_jam" /></div>
+        <div class="mb-2"><label class="form-label">Deskripsi</label><textarea class="form-control" id="paket-deskripsi"></textarea></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-ghost" data-bs-dismiss="modal">Batal</button><button class="btn btn-primary" onclick="savePackage()">Simpan</button></div>
+    </div></div>
+  </div>
+
+  <!-- Modal: Team Member -->
+  <div class="modal fade" id="modal-team" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title font-display">Anggota Team</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <input type="hidden" id="team-id" />
+        <div class="mb-2"><label class="form-label">Nama Lengkap</label><input class="form-control" id="team-nama_lengkap" /></div>
+        <div class="mb-2"><label class="form-label">Peran</label>
+          <select class="form-select" id="team-peran"><option value="mua">MUA</option><option value="hairdo">Hairdo</option><option value="hijab_stylist">Hijab Stylist</option><option value="assistant">Assistant</option><option value="lainnya">Lainnya</option></select>
+        </div>
+        <div class="mb-2"><label class="form-label">No. WhatsApp</label><input class="form-control" id="team-no_whatsapp" /></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-ghost" data-bs-dismiss="modal">Batal</button><button class="btn btn-primary" onclick="saveTeamMember()">Simpan</button></div>
+    </div></div>
+  </div>
+
+  <!-- Modal: Expense -->
+  <div class="modal fade" id="modal-expense" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title font-display">Catat Pengeluaran</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="mb-2"><label class="form-label">Tanggal</label><input type="date" class="form-control" id="expense-tanggal" /></div>
+        <div class="mb-2"><label class="form-label">Kategori</label>
+          <select class="form-select" id="expense-kategori"><option value="operasional">Operasional</option><option value="gaji_tim">Gaji Tim</option><option value="bahan_makeup">Bahan Makeup</option><option value="transport">Transport</option><option value="marketing">Marketing</option><option value="lainnya">Lainnya</option></select>
+        </div>
+        <div class="mb-2"><label class="form-label">Nominal (Rp)</label><input type="number" class="form-control" id="expense-nominal" /></div>
+        <div class="mb-2"><label class="form-label">Keterangan</label><textarea class="form-control" id="expense-keterangan"></textarea></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-ghost" data-bs-dismiss="modal">Batal</button><button class="btn btn-primary" onclick="saveExpense()">Simpan</button></div>
+    </div></div>
+  </div>
+
+  <!-- Modal: Upload Galeri -->
+  <div class="modal fade" id="modal-gallery-upload" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title font-display">Upload Foto Galeri</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body">
+        <div class="mb-2"><label class="form-label">Client</label><select class="form-select" id="gallery-client-id"></select></div>
+        <div class="mb-2"><label class="form-label">Kategori</label>
+          <select class="form-select" id="gallery-kategori"><option value="referensi">Referensi</option><option value="before">Before</option><option value="after">After</option><option value="hari_h">Hari H</option></select>
+        </div>
+        <div class="mb-2"><label class="form-label">Foto</label><input type="file" class="form-control" id="gallery-file" accept="image/*" /></div>
+        <div class="mb-2"><label class="form-label">Keterangan</label><input class="form-control" id="gallery-keterangan" /></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-ghost" data-bs-dismiss="modal">Batal</button><button class="btn btn-primary" onclick="saveGalleryPhoto()">Upload</button></div>
+    </div></div>
+  </div>
+
+  <div id="toast-container"></div>
+  <div id="loading-overlay" class="d-none"><div class="spinner-border" role="status"></div></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
