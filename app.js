@@ -3,8 +3,8 @@
 // =====================================================================
 
 // ── Konfigurasi Supabase ──
-const SUPABASE_URL = 'https://xxxxx.supabase.co';
-const SUPABASE_ANON_KEY = 'xxxxxxxxxxxxxxxxxxxx'; // anon/public key, AMAN dipakai di frontend
+const SUPABASE_URL = 'https://hbkswlyinqfmcsbijhlq.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_FZLh8xGb_88QgJWX5Yr6fg_d__0Oql0'; // anon/public key, AMAN dipakai di frontend
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
